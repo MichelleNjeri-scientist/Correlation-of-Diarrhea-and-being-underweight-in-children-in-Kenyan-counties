@@ -1,0 +1,233 @@
+---
+title: Relationship between prevalence of diarrhoea and underweight children in
+  each county.
+author: "Michelle Njeri Njuguna"
+date: "2023-07-21"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+# Import the required libraries
+
+```{r}
+library(tidyverse)
+library(stats)
+library(viridisLite)
+library(lubridate)
+library(visdat)
+```
+
+# Load the data to R from CSV
+
+```{r}
+input_data <- read.csv("cema_internship.csv", header = TRUE, sep = "," )
+```
+
+# Describe the data
+
+```{r}
+dim(input_data)    
+glimpse(input_data)
+summary(input_data)
+```
+# Missing Data
+```{r}
+# Convert columns with missing values to numeric using mutate_at()
+cols_with_missing <- c("Acute_Malnutrition", "stunted_6_to_23_months", "stunted_0_to_less_than_6_months", "diarrhoea_cases",
+                       "stunted_24_to_59_months","Total_Dewormed", "Underweight_0_to_less_6_months", 
+                       "Underweight_6_to_23_months", "Underweight_24_to_59_Months")
+
+input_data <- input_data %>%
+  mutate_at(vars(all_of(cols_with_missing)), as.numeric)
+
+# Visualize missing values 
+vis_miss(input_data)
+```
+# Visualizing missing data so that we can see if the columns we want to use have sufficient data or they will bring about some inconsistency.
+
+#Visualize your data (Total Dewormed in each county by Month)
+```{r}
+input_data$Month <- substr(input_data$period, 4, 6)
+
+# Create Separate Bar Charts for Each County using split and map functions
+unique_counties <- unique(input_data$county)
+
+# Create a function to generate the bar chart
+create_bar_chart <- function(county_data) {
+  ggplot(county_data, aes(x = Month, y = Total_Dewormed, fill = period)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(title = paste("Total Dewormed in", unique(county_data$county), "by Month"),
+         x = "Month",
+         y = "Total Dewormed") +
+    scale_y_continuous(labels = scales::comma) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          plot.title = element_text(hjust = 0.5, margin = margin(t = 20, b = 40)))
+}
+
+# Split the data by county and create the bar charts using map function
+county_data_list <- split(input_data, input_data$county)
+bar_charts <- map(county_data_list, create_bar_chart)
+
+# Print the bar charts
+# This checks if de-worming curbs diarrhea
+print(bar_charts)
+```
+# Diarrhoea Cases in each county by Month
+```{r}
+# Extract Month from "period" column
+input_data$Month <- substr(input_data$period, 4, 6)
+
+# Create Separate Bar Charts for Each County using split and map functions
+unique_counties <- unique(input_data$county)
+
+# Create a function to generate the bar chart
+create_bar_chart <- function(county_data) {
+  ggplot(county_data, aes(x = Month, y = diarrhoea_cases, fill = period)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(title = paste("Diarrhoea cases in", unique(county_data$county), "by Month"),
+         x = "Month",
+         y = "Diarrhoea cases") +
+    scale_y_continuous(labels = scales::comma) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          plot.title = element_text(hjust = 0.5, margin = margin(t = 20, b = 40)))
+}
+
+# Split the data by county and create the bar charts using map function
+county_data_list <- split(input_data, input_data$county)
+bar_charts <- map(county_data_list, create_bar_chart)
+
+# Print the bar charts
+print(bar_charts)
+```
+# Underweight_0_to_less_6_months
+```{r}
+# Extract Month from "period" column
+input_data$Month <- substr(input_data$period, 4, 6)
+
+# Create Separate Bar Charts for Each County using split and map functions
+unique_counties <- unique(input_data$county)
+
+# Create a function to generate the bar chart
+create_bar_chart <- function(county_data) {
+  ggplot(county_data, aes(x = Month, y = Underweight_0_to_less_6_months, fill = period)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(title = paste("Underweight 0 to < 6 months in", unique(county_data$county), "by Month"),
+         x = "Month",
+         y = "Underweight 0 to < 6 months") +
+    scale_y_continuous(labels = scales::comma) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          plot.title = element_text(hjust = 0.5, margin = margin(t = 20, b = 40)))
+}
+
+# Split the data by county and create the bar charts using map function
+county_data_list <- split(input_data, input_data$county)
+bar_charts <- map(county_data_list, create_bar_chart)
+
+# Print the bar charts
+print(bar_charts)
+```
+# Underweight 6 to 23 months
+```{r}
+# Extract Month from "period" column
+input_data$Month <- substr(input_data$period, 4, 6)
+
+# Create Separate Bar Charts for Each County using split and map functions
+unique_counties <- unique(input_data$county)
+
+# Create a function to generate the bar chart
+create_bar_chart <- function(county_data) {
+  ggplot(county_data, aes(x = Month, y = Underweight_6_to_23_months, fill = period)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(title = paste("Underweight 6 to 23 months in", unique(county_data$county), "by Month"),
+         x = "Month",
+         y = "Underweight 6 to 23 months") +
+    scale_y_continuous(labels = scales::comma) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          plot.title = element_text(hjust = 0.5, margin = margin(t = 20, b = 40)))
+}
+
+# Split the data by county and create the bar charts using map function
+county_data_list <- split(input_data, input_data$county)
+bar_charts <- map(county_data_list, create_bar_chart)
+
+# Print the bar charts
+print(bar_charts)
+```
+
+ 
+# Underweight 24 to 59 Months
+```{r}
+# Extract Month from "period" column
+input_data$Month <- substr(input_data$period, 4, 6)
+
+# Create Separate Bar Charts for Each County using split and map functions
+unique_counties <- unique(input_data$county)
+
+# Create a function to generate the bar chart
+create_bar_chart <- function(county_data) {
+  ggplot(county_data, aes(x = Month, y = Underweight_24_to_59_Months, fill = period)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(title = paste("Underweight 24 to 59 Months in", unique(county_data$county), "by Month"),
+         x = "Month",
+         y = "Underweight 24 to 59 Months") +
+    scale_y_continuous(labels = scales::comma) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          plot.title = element_text(hjust = 0.5, margin = margin(t = 20, b = 40)))
+}
+
+# Split the data by county and create the bar charts using map function
+county_data_list <- split(input_data, input_data$county)
+bar_charts <- map(county_data_list, create_bar_chart)
+
+# Print the bar charts
+print(bar_charts)
+```
+# Correlate Total Dewormed with Diarrhoea Cases in each county
+```{r}
+# Calculate Correlation between Total Dewormed and Diarrhoea Cases for Each County
+correlation_by_county <- input_data %>%
+  group_by(county) %>%
+  summarize(correlation_coefficient = cor(Total_Dewormed, `diarrhoea_cases`, use = "pairwise.complete.obs"),
+            correlation_percentage = correlation_coefficient * 100) %>% arrange(desc(correlation_coefficient)) 
+
+print(correlation_by_county)
+```
+# Correlate Diarrhoea Cases with Underweight 0-<6 months in each county
+```{r}
+# Calculate Correlation between Diarrhoea Cases and Underweight 0-<6 months for Each County
+correlation_by_county <- input_data %>%
+  group_by(county) %>%
+  summarize(correlation_coefficient = cor(diarrhoea_cases, `Underweight_0_to_less_6_months`, use = "pairwise.complete.obs"),
+            correlation_percentage = correlation_coefficient * 100) %>% arrange(desc(correlation_coefficient))
+
+print(correlation_by_county)
+```
+# Correlate Diarrhoea Cases with Underweight 6 to 23 months in each county
+```{r}
+# Calculate Correlation between Diarrhoea Cases and Underweight 6 to 23 months for Each County
+correlation_by_county <- input_data %>%
+  group_by(county) %>%
+  summarize(correlation_coefficient = cor(diarrhoea_cases, `Underweight_6_to_23_months`, use = "pairwise.complete.obs"),
+            correlation_percentage = correlation_coefficient * 100) %>% arrange(desc(correlation_coefficient))
+
+print(correlation_by_county)
+```
+# Correlate Diarrhoea Cases with Underweight 24 to 59 months in each county
+```{r}
+# Calculate Correlation between Diarrhoea Cases and Underweight 24 to 59 months for Each County
+correlation_by_county <- input_data %>%
+  group_by(county) %>%
+  summarize(correlation_coefficient = cor(diarrhoea_cases, `Underweight_24_to_59_Months`, use = "pairwise.complete.obs"),
+            correlation_percentage = correlation_coefficient * 100) %>% arrange(desc(correlation_coefficient))
+
+print(correlation_by_county)
+```
+# NOTE!
+# If the correlation is greater than 70%, it shows that if a child suffers from diarrhoea there's a great possibility the child may also be underweight.
+# If the correlation is ranging from 40-60%, it shows that if a child suffers from diarrhoea there may be a possibility of them being underweight.
+# If the correlation is less than 40%, it shows that if a child suffers from diarrhoea there's a small possibility of them being underweight.
+# Correlation percentages are ordered from the highest to the lowest county.
+
+
